@@ -1,32 +1,42 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <Header/>
+    <v-main>
+      <MenuList :menu="this.menu"></MenuList>
+    </v-main>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import MenuList from '@/components/MenuList.vue'
+import Header from '@/components/Header.vue'
 
-#nav {
-  padding: 30px;
-}
+export default {
+  name: 'App',
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  components: {
+    MenuList,
+    Header
+  },
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+  data () {
+    return {
+      menu: {
+      }
+    }
+  },
+  created () {
+    this.subscribe()
+  },
+  mounted () {
+  },
+  methods: {
+    subscribe () {
+      this.$firebase.database().ref().child('menu').on('value', (snapshot) => {
+        const menu = snapshot.val()
+        this.menu = menu
+      })
+    }
+  }
 }
-</style>
+</script>
