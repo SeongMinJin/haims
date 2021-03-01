@@ -22,3 +22,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### setting
+$ firebase functions:config.set admin.emial=xx@abx.com admin.db_url=https://xxx-site.firebaseio.com

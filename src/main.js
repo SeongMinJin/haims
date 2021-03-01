@@ -20,6 +20,11 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 firebase.analytics()
 
+firebase.auth().onAuthStateChanged((fu) => {
+  console.log(fu)
+  store.commit('setFireUser', fu)
+})
+
 Vue.prototype.$firebase = firebase
 
 new Vue({

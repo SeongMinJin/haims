@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "haims-the-cafe"
+    "default": "haims-the-cafe",
+    "haims-the-cafe": "haims-the-cafe"
   }
 }

@@ -18,8 +18,8 @@
         <!--수정 다이얼로그-->
         <v-dialog
           v-model="edit"
-          fullscreen
           hide-overlay
+          fullscreen
           transition="dialog-bottom-transition"
         >
           <v-card>
@@ -216,13 +216,16 @@ export default {
   props: [
     'coffee'
   ],
+  mounted () {
+    console.log(this.coffee)
+  },
   methods: {
-    saveTitle (i) {
+    async saveTitle (i) {
       var currentValue = i
       this.$firebase.database().ref().child('menu').child('coffee').child(currentValue).update({ title: this.menuTitle })
       this.menuTitle = ''
     },
-    saveDescription (i) {
+    async saveDescription (i) {
       var currentValue = i
       this.$firebase.database().ref().child('menu').child('coffee').child(currentValue).update({ description: this.menuDescription })
       this.menuDescription = ''
@@ -231,7 +234,7 @@ export default {
       this.coffee.push({
         title: this.menuTitle,
         description: this.menuDescription,
-        price: 3000,
+        price: '3,000',
         picture: '@/assets/jamongAde.jpg'
       })
       this.menuTitle = ''
