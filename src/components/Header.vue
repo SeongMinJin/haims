@@ -56,7 +56,7 @@
         nav
       >
         <v-list-item-group>
-          <v-list-item @click="drawer = false">
+          <v-list-item @click="redirect">
             <v-icon large color="red">mdi-youtube</v-icon><v-spacer></v-spacer><v-list-item-title class="ml-4">하임스 유튜브 채널</v-list-item-title>
           </v-list-item>
 
@@ -98,6 +98,11 @@ export default {
     },
     signOut () {
       this.$firebase.auth().signOut()
+    },
+    redirect () {
+      var url = 'https://www.youtube.com/channel/UCsgCW2WGxdpxsBEO59OUFqA'
+      window.open(url)
+      this.drawer = false
     }
   }
 }

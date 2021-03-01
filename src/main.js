@@ -21,7 +21,6 @@ firebase.initializeApp(firebaseConfig)
 firebase.analytics()
 
 firebase.auth().onAuthStateChanged((fu) => {
-  console.log(fu)
   store.commit('setFireUser', fu)
 })
 

@@ -73,7 +73,7 @@
           top
           right
           fab
-          @click="del=!del"
+          @click="openDeleteDialog(i)"
         >
           <v-icon>mdi-trash-can</v-icon>
         </v-btn>
@@ -201,6 +201,25 @@
 
       </v-card>
     </v-dialog>
+    <!--삭제 다이얼로그-->
+    <v-dialog
+      v-model="del"
+      max-width="400"
+      hide-overlay
+    >
+      <v-card>
+        <v-card flat>
+          <v-card-title>정말 삭제 하시겠습니까?</v-card-title>
+          <p class="ml-4"><v-icon color="red">mdi-alert-circle-outline</v-icon>삭제한 데이터는 복구할 수 없습니다.</p>
+        </v-card>
+        <v-card flat class="d-flex justify-center">
+          <v-card-actions>
+            <v-btn width="100" @click="deleteMenu(selectedItemIndex)">삭제하기</v-btn>
+            <v-btn width="100" @click="closeDialog">취소</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -214,7 +233,8 @@ export default {
       menuDescription: '',
       selectedItemIndex: -1,
       selectedItemTitle: '',
-      selectedItemDescription: ''
+      selectedItemDescription: '',
+      emptyCoffee: []
     }
   },
   props: [
@@ -223,26 +243,32 @@ export default {
   mounted () {
   },
   methods: {
-    saveTitle (i) {
-      var currentValue = i
-      this.$firebase.database().ref().child('menu').child('coffee').child(currentValue).update({ title: this.menuTitle })
+    saveTitle (index) {
+      this.$firebase.database().ref().child('menu').child('coffee').child(index).update({ title: this.menuTitle })
       this.selectedItemTitle = this.menuTitle
     },
-    saveDescription (i) {
-      var currentValue = i
-      this.$firebase.database().ref().child('menu').child('coffee').child(currentValue).update({ description: this.menuDescription })
+    saveDescription (index) {
+      this.$firebase.database().ref().child('menu').child('coffee').child(index).update({ description: this.menuDescription })
       this.selectedItemDescription = this.menuDescription
     },
     updateMenu () {
-      this.coffee.push({
-        title: this.menuTitle,
-        description: this.menuDescription,
-        price: '3,000',
-        picture: '@/assets/jamongAde.jpg'
-      })
-      this.menuTitle = ''
-      this.menuDescription = ''
-      this.$firebase.database().ref().child('menu').update({ coffee: this.coffee })
+      if (!this.coffee) {
+        this.emptyCoffee.push({
+          title: this.menuTitle,
+          description: this.menuDescription,
+          price: '3,000',
+          picture: '@/assets/jamongAde.jpg'
+        })
+        this.$firebase.database().ref().child('menu').update({ coffee: this.emptyCoffee })
+      } else {
+        this.coffee.push({
+          title: this.menuTitle,
+          description: this.menuDescription,
+          price: '3,000',
+          picture: '@/assets/jamongAde.jpg'
+        })
+        this.$firebase.database().ref().child('menu').update({ coffee: this.coffee })
+      }
       this.update = false
     },
     openEditDialog (index) {
@@ -259,6 +285,15 @@ export default {
       this.update = false
       this.selectedItemTitle = ''
       this.selectedItemDescription = ''
+    },
+    openDeleteDialog (index) {
+      this.del = true
+      this.selectedItemIndex = index
+    },
+    deleteMenu (index) {
+      this.coffee.splice(index, 1)
+      this.del = false
+      this.$firebase.database().ref().child('menu').update({ coffee: this.coffee })
     }
   }
 }

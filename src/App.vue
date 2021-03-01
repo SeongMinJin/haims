@@ -35,7 +35,6 @@ export default {
       this.$firebase.database().ref().child('menu').on('value', (snapshot) => {
         const menu = snapshot.val()
         this.menu = menu
-        console.log(this.menu.coffee)
       })
     }
   }

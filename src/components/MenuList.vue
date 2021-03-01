@@ -32,13 +32,13 @@
           <Coffee :coffee="menu.coffee"></Coffee>
         </template>
         <template v-if="currentValue == `라떼`">
-          <Latte/>
+          <Latte :latte="menu.latte"></Latte>
         </template>
         <template v-if="currentValue == `에이드`">
-          <Ade/>
+          <Ade :ade="menu.ade"></Ade>>
         </template>
         <template v-if="currentValue == `디저트`">
-          <Desert/>
+          <Desert :desert="menu.desert"></Desert>>
         </template>
       </v-card>
       </v-tab-item>
