@@ -15,53 +15,6 @@
         tile
         min-width="350"
       >
-        <!--수정 다이얼로그-->
-        <v-dialog
-          v-model="edit"
-          hide-overlay
-          fullscreen
-          transition="dialog-bottom-transition"
-        >
-          <v-card>
-            <v-toolbar
-              dark
-              color="primary"
-            >
-              <v-btn
-                icon
-                dark
-                @click="edit = !edit"
-              >
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-              <v-toolbar-title>{{ menu.title }}(수정하기)</v-toolbar-title>
-            </v-toolbar>
-            <v-card flat class="d-flex flex-column justify-center align-center">
-              <v-card class="d-flex ma-12" width="500">
-                <v-text-field
-                  placeholder="수정하고싶은 상품명으로 적어주세요."
-                  v-model="menuTitle"
-                  class="ma-8" label="상품명"
-                >
-                </v-text-field>
-                <v-btn icon absolute top right @click="saveTitle(i)"><v-icon large>mdi-content-save</v-icon></v-btn>
-              </v-card>
-              <v-divider></v-divider>
-              <v-card class="d-flex justify-center ma-12" width="500">
-                <v-textarea
-                  v-model="menuDescription"
-                  placeholder="수정하고 싶은 상품설명으로 적어주세요."
-                  dense
-                  auto-grow
-                  class="ma-8"
-                  label="상품설명"
-                ></v-textarea>
-                <v-btn icon absolute top right @click="saveDescription(i)"><v-icon large>mdi-content-save</v-icon></v-btn>
-              </v-card>
-            </v-card>
-
-          </v-card>
-        </v-dialog>
 
         <!--상품 사진-->
         <v-img
@@ -108,7 +61,7 @@
           top
           left
           fab
-          @click="edit = !edit"
+          @click="openEditDialog(i)"
           style="z-index:2"
         >
           <v-icon>mdi-pencil</v-icon>
@@ -124,6 +77,7 @@
         >
           <v-icon>mdi-trash-can</v-icon>
         </v-btn>
+
       </v-card>
 
       <!--상품 추가하기 폼-->
@@ -199,7 +153,54 @@
         </v-dialog>
       </v-card>
     </v-card>
+    <!--수정 다이얼로그-->
+    <v-dialog
+      v-model="edit"
+      hide-overlay
+      fullscreen
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-toolbar
+          dark
+          color="primary"
+        >
+          <v-btn
+            icon
+            dark
+            @click="edit =! edit"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>{{ this.selectedItemTitle }}(수정하기)</v-toolbar-title>
+        </v-toolbar>
+        <v-card flat class="d-flex flex-column justify-center align-center">
+          <v-card class="d-flex ma-12" width="500">
+            <v-text-field
+              v-model="menuTitle"
+              class="ma-8" label="상품명"
+            >
+            </v-text-field>
+            <v-btn icon absolute top right @click="saveTitle(selectedItemIndex)"><v-icon large>mdi-content-save</v-icon></v-btn>
+          </v-card>
 
+          <v-divider></v-divider>
+
+          <v-card class="d-flex justify-center ma-12" width="500">
+            <v-textarea
+              v-model="menuDescription"
+              placeholder="수정하고 싶은 상품설명으로 적어주세요."
+              dense
+              auto-grow
+              class="ma-8"
+              label="상품설명"
+            ></v-textarea>
+            <v-btn icon absolute top right @click="saveDescription(selectedItemIndex)"><v-icon large>mdi-content-save</v-icon></v-btn>
+          </v-card>
+        </v-card>
+
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -210,25 +211,27 @@ export default {
       del: false,
       update: false,
       menuTitle: '',
-      menuDescription: ''
+      menuDescription: '',
+      selectedItemIndex: -1,
+      selectedItemTitle: '',
+      selectedItemDescription: ''
     }
   },
   props: [
     'coffee'
   ],
   mounted () {
-    console.log(this.coffee)
   },
   methods: {
-    async saveTitle (i) {
+    saveTitle (i) {
       var currentValue = i
       this.$firebase.database().ref().child('menu').child('coffee').child(currentValue).update({ title: this.menuTitle })
-      this.menuTitle = ''
+      this.selectedItemTitle = this.menuTitle
     },
-    async saveDescription (i) {
+    saveDescription (i) {
       var currentValue = i
       this.$firebase.database().ref().child('menu').child('coffee').child(currentValue).update({ description: this.menuDescription })
-      this.menuDescription = ''
+      this.selectedItemDescription = this.menuDescription
     },
     updateMenu () {
       this.coffee.push({
@@ -240,7 +243,22 @@ export default {
       this.menuTitle = ''
       this.menuDescription = ''
       this.$firebase.database().ref().child('menu').update({ coffee: this.coffee })
-      this.update = !this.update
+      this.update = false
+    },
+    openEditDialog (index) {
+      this.edit = true
+      this.selectedItemIndex = index
+      this.selectedItemTitle = this.coffee[this.selectedItemIndex].title
+      this.selectedItemDescription = this.coffee[this.selectedItemIndex].description
+      this.menuTitle = this.selectedItemTitle
+      this.menuDescription = this.selectedItemDescription
+    },
+    closeDialog () {
+      this.edit = false
+      this.del = false
+      this.update = false
+      this.selectedItemTitle = ''
+      this.selectedItemDescription = ''
     }
   }
 }
