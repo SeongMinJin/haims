@@ -56,33 +56,55 @@
         nav
       >
         <v-list-item-group>
-          <v-list-item @click="redirect">
+          <v-list-item @click="redirectToYoutube">
             <v-icon large color="red">mdi-youtube</v-icon><v-spacer></v-spacer><v-list-item-title class="ml-4">하임스 유튜브 채널</v-list-item-title>
           </v-list-item>
 
-          <v-list-item @click="drawer = false">
+          <v-list-item @click="redirectToInstagram">
+            <v-icon large color="red">mdi-instagram</v-icon><v-list-item-title class="ml-4">하임스 인스타그램</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item @click="drawer = false" :to="`/location`">
             <v-icon large color="primary">mdi-map-marker</v-icon><v-list-item-title class="ml-4">찾아오시는 길</v-list-item-title>
           </v-list-item>
 
-          <v-list-item @click="drawer = false">
-            <v-icon large color="#FFD54F">mdi-comment-processing</v-icon><v-list-item-title class="ml-4">하임스 실시간 채팅방</v-list-item-title>
+          <v-list-item @click="redirectToKaKao">
+            <v-icon large color="#FFD54F">mdi-hand</v-icon><v-list-item-title class="ml-4">비대면 주문하기</v-list-item-title>
           </v-list-item>
 
-          <v-list-item @click="drawer = false">
+          <v-list-item @click="drawer = false" :to="`/`">
             <v-icon large color="#6D4C41">mdi-coffee</v-icon><v-list-item-title class="ml-4">메뉴 보기</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item @click="getAdmin">
+            <v-icon large color="red">mdi-account-alert</v-icon><v-list-item-title class="ml-4">관리자</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
         <v-footer outlined rounded=""><v-icon small color="#000000">mdi-copyright</v-icon><div class="ml-2">made by - 진뚱딴지</div></v-footer>
       </v-list>
     </v-navigation-drawer>
+
+    <v-snackbar
+      v-model="snackbar"
+      color="red"
+      timeout="2000"
+    >
+
+    <v-icon class="mr-4">mdi-alert</v-icon>{{ text }}
+
+    </v-snackbar>
   </div>
 </template>
 <script>
+import { Bus } from '@/main.js'
 export default {
   data () {
     return {
       drawer: false,
-      loading: false
+      loading: false,
+      admin: false,
+      snackbar: false,
+      text: ''
     }
   },
   methods: {
@@ -98,12 +120,44 @@ export default {
     },
     signOut () {
       this.$firebase.auth().signOut()
+      this.admin = false
+      Bus.$emit('adminValue', this.admin)
     },
-    redirect () {
+    redirectToYoutube () {
       var url = 'https://www.youtube.com/channel/UCsgCW2WGxdpxsBEO59OUFqA'
       window.open(url)
       this.drawer = false
+    },
+    redirectToKaKao () {
+      var url = 'https://pf.kakao.com/_xjfxixcK'
+      window.open(url)
+      this.drawer = false
+    },
+    redirectToInstagram () {
+      var url = 'https://www.instagram.com/ha_tae_hatae/'
+      window.open(url)
+      this.drawer = false
+    },
+    getAdmin () {
+      this.$firebase.auth().onAuthStateChanged((user) => {
+        var uid
+        if (user) {
+          uid = user.uid
+          if (uid === 'okTxzmK3inNZMHpaLrGyV7lubT23' || uid === 'hOwIty0vscNrn7bRhgAMqg1H4Sf2') {
+            this.admin = true
+          } else {
+            this.snackbar = true
+            this.text = '관리자만 접근할 수 있습니다.'
+          }
+        } else {
+          this.snackbar = true
+          this.text = '로그인 후 이용할 수 있습니다.'
+        }
+        this.drawer = false
+        Bus.$emit('adminValue', this.admin)
+      })
     }
+
   }
 }
 </script>

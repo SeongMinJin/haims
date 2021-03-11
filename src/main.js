@@ -4,6 +4,29 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import firebase from 'firebase'
+import VuetifyDialog from 'vuetify-dialog'
+import * as VueGoogleMaps from 'vue2-google-maps'
+
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyDgnJAC_A5CwDDHZhYG76i0Y54STAOdh-o',
+    libraries: 'places' // This is required if you use the Autocomplete plugin
+    // OR: libraries: 'places,drawing'
+    // OR: libraries: 'places,drawing,visualization'
+    // (as you require)
+
+    /// / If you want to set the version, you can do so:
+    // v: '3.26',
+  }
+})
+
+Vue.config.productionTip = false
+
+Vue.use(VuetifyDialog, {
+  context: {
+    vuetify
+  }
+})
 
 Vue.config.productionTip = false
 
@@ -25,6 +48,8 @@ firebase.auth().onAuthStateChanged((fu) => {
 })
 
 Vue.prototype.$firebase = firebase
+
+export const Bus = new Vue()
 
 new Vue({
   router,

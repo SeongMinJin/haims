@@ -14,16 +14,12 @@ const routes = [
   {
     path: '/location',
     name: 'Location',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: Location
   },
   {
-    path: '/youtube',
-    beforeEnter (to, from, next) {
-      window.location = 'https://www.youtube.com/channel/UCsgCW2WGxdpxsBEO59OUFqA'
-    }
+    path: '*',
+    name: 'error',
+    component: () => import('../views/error')
   }
 ]
 

@@ -35,10 +35,10 @@
           <Latte :latte="menu.latte"></Latte>
         </template>
         <template v-if="currentValue == `에이드`">
-          <Ade :ade="menu.ade"></Ade>>
+          <Ade :ade="menu.ade"></Ade>
         </template>
         <template v-if="currentValue == `디저트`">
-          <Desert :desert="menu.desert"></Desert>>
+          <Desert :desert="menu.desert"></Desert>
         </template>
       </v-card>
       </v-tab-item>
@@ -88,6 +88,8 @@ export default {
     saveCurrentValue (i) {
       this.currentValue = this.menuTitles[i].title
     }
+  },
+  created () {
   }
 }
 </script>
